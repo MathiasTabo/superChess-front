@@ -1,17 +1,15 @@
 {
-    "extends": [
-        "airbnb",
-        "airbnb-typescript"
-    ],
-    "parserOptions": {
-        "project": "./tsconfig.json"
-    },
-    "env": {
-        "node": true,
-        "es6": true,
-        "browser": true
-    },
-    "rules": {
-        "no-console": "off"
-    }
+  "extends": ["airbnb", "airbnb-typescript", "prettier"],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["react", "prettier"],
+  "env": {
+    "node": true,
+    "es6": true,
+    "browser": true
+  },
+  "rules": {
+    "no-console": "off"
+  }
 }
