@@ -82,6 +82,7 @@ function Login() {
       return (
         <Redirect to={{
           pathname: '/lobby',
+          state: { token },
         }}
         />
       );

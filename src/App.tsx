@@ -1,123 +1,162 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  BrowserRouter as Router, Switch, Route,
+  BrowserRouter as Router, Switch, Route, Redirect,
 } from 'react-router-dom';
 import './App.css';
+import {
+  List, Button, Skeleton, Divider,
+} from 'antd';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import Login from './component/Login';
 
-function Dashboard() {
-  return (
-    <h2>Dashboard</h2>
-  );
+interface ILobbyProps {
+  location: {
+    state: {
+      token: string
+    }
+  }
 }
 
-// function Login() {
-//   const [userName, setUserName] = useState<string>('');
-//   const [password, setPassword] = useState<string>('');
+interface IGameProps {
+  location: {
+    state: {
+      token: string,
+      game_id: string
+    }
+  }
+}
 
-//   const [token, setToken] = useState<string>('');
+interface IGames {
+  id: string,
+  players: [string],
+  turn: number,
+  state: number,
+  id_string: string,
+}
 
-//   const [userNameCreate, setUserNameCreate] = useState<string>('');
-//   const [passwordCreate, setPasswordCreate] = useState<string>('');
-//   const [passwordValidate, setPasswordValidate] = useState<string>('');
+function Game(props: IGameProps) {
+  const { location } = props;
+  console.log(location.state);
+  return (
+    <>
+      <h2>Game</h2>
+    </>
+  );
+}
+function Dashboard(props: ILobbyProps) {
+  const { location } = props;
+  if (location.state === undefined) {
+    return (
+      <Redirect to={{
+        pathname: '/',
+      }}
+      />
+    );
+  }
+  const [dataIsSet, setDataIsSet] = useState<boolean>(false);
+  const [data, setData] = useState<IGames[]>([]);
+  const [joinGameId, setJoinGameId] = useState<string>('');
+  // console.log('TOKEN ', location.state.token);
 
-//   async function login() {
-//     const requestOptions = {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({ userName, password }),
-//     };
-//     message.loading({ content: 'Loading...', key: 'updatable' });
-//     try {
-//       const response = await fetch('http://localhost:3001/login', requestOptions);
-//       if (response.ok) {
-//         const data = await response.json();
-//         if (data.id) {
-//           message.success('logged in', 2);
-//         }
-//         console.log(data);
-//         setToken(data.id);
-//       } else {
-//         const data = await response.json();
-//         console.log(data.message);
-//         message.error({ content: data.message, key: 'updatable', duration: 10 });
-//       }
-//     } catch (e) {
-//       message.error({ content: e, key: 'updatable', duration: 2 });
-//     }
-//   }
+  const getGames = () => {
+    if (dataIsSet) {
+      return;
+    }
+    setDataIsSet(true);
+    fetch('http://localhost:3001/game')
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        setData(result);
+        setDataIsSet(false);
+      })
+      .catch((error) => console.log('error', error));
+  };
+  useEffect(() => {
+    getGames();
+  }, []);
 
-//   async function signup() {
-//     const requestOptions = {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({
-//         userName: userNameCreate, password: passwordCreate, confirmPassword: passwordValidate,
-//       }),
-//     };
-//     message.loading({ content: 'Loading...', key: 'updatable' });
-//     try {
-//       const response = await fetch('http://localhost:3001/register', requestOptions);
-//       if (response.ok) {
-//         const data = await response.json();
-//         if (data.id) {
-//           message.success('User Created', 2);
-//         }
-//         console.log(data);
-//         setToken(data.id);
-//       } else {
-//         const data = await response.json();
-//         console.log(data.message);
-//         message.error({ content: data.message, key: 'updatable', duration: 10 });
-//       }
-//     } catch (e) {
-//       message.error({ content: e, key: 'updatable', duration: 2 });
-//     }
-//   }
+  function joinGame(id: string) {
+    console.log(id);
+    setJoinGameId(id);
+    // console.log(joinGameId);
+  }
 
-//   function Token() {
-//     if (token) {
-//       return (
-//         <Redirect to={{
-//           pathname: '/lobby',
-//           // state: { token: token },
-//         }}
-//         />
-//       );
-//     }
-//     return (
-//       <div />
-//     );
-//   }
+  function addGame() {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ players: [location.state.token], turn: 0, state: 0 }),
+    };
 
-//   return (
-//     <div
-//       style={{ display: 'flex' }}
-//     >
-//       <div style={{ width: '35%' }}>
-//         <h1>Login</h1>
-//         <Input placeholder="Username" onChange=
-// {(event: any) => { setUserName(event.target.value); }} />
-//         <Input.Password placeholder="Password" onChange={(event: any) =>
-// { setPassword(event.target.value); }} />
-//         <Button style={{ marginTop: '3%' }} onClick={async () => login()}>Login</Button>
-//       </div>
-//       <div style={{ width: '35%', marginLeft: '10%' }}>
-//         <h1>Signup</h1>
-//         <Input
-//           placeholder="Create Username"
-//           onChange={(event) => { setUserNameCreate(event.target.value); }}
-//         />
-//         <Input.Password placeholder=
-// "Create Password" onChange={(event) => { setPasswordCreate(event.target.value); }} />
-//         <Input.Password placeholder="Validate Password" onChange={(event) =>
-// { setPasswordValidate(event.target.value); }} />
-//         <Button style={{ marginTop: '3%' }} onClick={async () => signup()}>Signup</Button>
-//       </div>
-//       <Token />
-//     </div>
-//   );
-// }
+    fetch('http://localhost:3001/game', requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        setJoinGameId(result.id);
+      }).catch((error) => console.log('error', error));
+    // setJoinGameId(id);
+    // console.log(joinGameId);
+  }
+
+  function GameIsJoin() {
+    if (joinGameId) {
+      return (
+        <Redirect to={{
+          pathname: `/game/${joinGameId}`,
+          state: {
+            token: location.state.token,
+            game_id: joinGameId,
+          },
+        }}
+        />
+      );
+    }
+    return (
+      <div />
+    );
+  }
+  return (
+    <>
+      <h2>Dashboard</h2>
+      <Button style={{ marginTop: '3%' }} onClick={async () => addGame()}>Join Game</Button>
+      <div
+        id="scrollableDiv"
+        style={{
+          height: 400,
+          overflow: 'auto',
+          padding: '0 16px',
+          border: '1px solid rgba(140, 140, 140, 0.35)',
+        }}
+      >
+        <InfiniteScroll
+          dataLength={data.length}
+          next={getGames}
+          hasMore={data.length < 50}
+          loader={<Skeleton avatar paragraph={{ rows: 1 }} active />}
+          endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
+          scrollableTarget="scrollableDiv"
+        >
+          <List
+            dataSource={data}
+            renderItem={(item) => (
+              <List.Item key={item.id}>
+                <List.Item.Meta
+                  title={item.id}
+                  description={
+                    <Button style={{ marginTop: '3%' }} onClick={async () => joinGame(item.id)}>Join Game</Button>
+                  }
+                />
+                <div>Content</div>
+              </List.Item>
+            )}
+          />
+        </InfiniteScroll>
+      </div>
+      <GameIsJoin />
+    </>
+  );
+}
 
 function App() {
   return (
@@ -125,6 +164,7 @@ function App() {
       <Switch>
         <Route component={Login} exact path="/" />
         <Route component={Dashboard} exact path="/lobby" />
+        <Route component={Game} exact path="/game/:id" />
       </Switch>
     </Router>
   );
