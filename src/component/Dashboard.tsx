@@ -6,6 +6,7 @@ import {
   List, Button, Skeleton, Divider,
 } from 'antd';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import socket from './Socket';
 
 interface ILobbyProps {
   location: {
@@ -36,6 +37,10 @@ function Dashboard(props: ILobbyProps) {
   const [dataIsSet, setDataIsSet] = useState<boolean>(false);
   const [data, setData] = useState<IGames[]>([]);
   const [joinGameId, setJoinGameId] = useState<string>('');
+  const handleInviteAccepted = ((idGame: string) => {
+    console.log(idGame);
+    setJoinGameId(idGame);
+  });
   // console.log('TOKEN ', location.state.token);
 
   const getGames = () => {
@@ -54,6 +59,7 @@ function Dashboard(props: ILobbyProps) {
   };
   useEffect(() => {
     getGames();
+    socket.on('joinedRoom', handleInviteAccepted);
   }, []);
 
   function joinGame(id: string) {
@@ -68,7 +74,12 @@ function Dashboard(props: ILobbyProps) {
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
-        setJoinGameId(result.id);
+        socket.emit('joinRoom', {
+          room: result.id,
+          player: location.state.token,
+        });
+
+        // setJoinGameId(result.id);
       }).catch((error) => console.log('error', error));
 
     // console.log(id);
@@ -77,6 +88,7 @@ function Dashboard(props: ILobbyProps) {
   }
 
   function addGame() {
+    // socket.on('timer', );
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -86,8 +98,12 @@ function Dashboard(props: ILobbyProps) {
     fetch('http://localhost:3001/game', requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        socket.emit('joinRoom', {
+          room: result.id,
+          player: location.state.token,
+        });
         console.log(result);
-        setJoinGameId(result.id);
+        // setJoinGameId(result.id);
       }).catch((error) => console.log('error', error));
     // setJoinGameId(id);
     // console.log(joinGameId);
@@ -113,7 +129,7 @@ function Dashboard(props: ILobbyProps) {
   return (
     <>
       <h2>Dashboard</h2>
-      <Button style={{ marginTop: '3%' }} onClick={async () => addGame()}>Join Game</Button>
+      <Button style={{ marginTop: '3%' }} onClick={async () => addGame()}>Add Game</Button>
       <div
         id="scrollableDiv"
         style={{
