@@ -9,7 +9,8 @@ import './App.css';
 import Dashboard from './component/Dashboard';
 import Login from './component/Login';
 import socket from './component/Socket';
-import Board from './component/Board';
+import Case from './component/Board';
+// import Board from './component/Board';
 
 interface IGameProps {
   location: {
@@ -23,40 +24,87 @@ interface IGameProps {
 function Game(props: IGameProps) {
   const { location } = props;
   console.log(location.state);
+  // const [board, setBoard] = React.useState<Array<Array<any>>>([]);
+  const [posibleMove, setPosibleMove] = React.useState<Array<any>>([]);
+  const [rows, setRows] = React.useState<Array<any>>([]);
+  const size = 80;
 
-  // const [boardArray, setBoardArray] = React.useState<Array<any>>([]);
+  function displayBoard(boards: any) {
+    const arr = [];
+    let i: number = 0;
+    const color: boolean = true;
+    console.log(posibleMove);
+    for (let y = 0; y < 8; y += 1) {
+      for (let x = 0; x < 8; x += 1) {
+        if (boards && boards[y] && boards[y][x] && boards[y][x] !== null) {
+          arr.push(
+            <Case
+              key={i}
+              x={x}
+              y={y}
+              size={size}
+              color={boards[y][x].color}
+              id={boards[y][x].id}
+              black={y % 2 === 0 ? x % 2 === 1 : x % 2 === 0}
+              gameId={location.state.game_id}
+              token={location.state.token}
+            />,
+          );
+        } else {
+          arr.push(
+            <Case
+              key={i}
+              x={x}
+              y={y}
+              size={size}
+              color={color}
+              id={0}
+              black={y % 2 === 0 ? x % 2 === 1 : x % 2 === 0}
+              gameId={location.state.game_id}
+              token={location.state.token}
+            />,
+          );
+        }
+        i += 1;
+      }
+    }
+    setRows(arr);
+  }
 
   const handleInviteAccepted = ((piece: any) => {
     console.log(piece);
-    // setBoardArray(piece);
+    if (piece.boards) {
+      console.log(piece.boards);
+      // setBoard(piece.boards);
+      displayBoard(piece.boards);
+    }
+    if (piece.PosiblePos) {
+      setPosibleMove(piece.PosiblePos);
+    }
   });
 
-  // function clicOnPiece(x: number, y: number) {
-  //   socket.emit('GameToServer', {
-  //     room: location.state.game_id,
-  //     player: location.state.token,
-  //     x,
-  //     y,
-  //   });
-  // }
-
-  // function nexMove() {
-  //   socket.emit('GameToServer', {
-  //     room: location.state.game_id,
-  //     player: location.state.token,
-  //     x: 6,
-  //     y: 4,
-  //   });
-  // }
-
-  // board={boardArray}
   useEffect(() => {
     socket.on('GameToClient', handleInviteAccepted);
   }, []);
   return (
     <>
       <h2>Game</h2>
-      <Board gameId={location.state.game_id} token={location.state.token} />
+      <>
+        <div style={{
+          display: 'flex', flexDirection: 'row', flexWrap: 'wrap', width: `${((size * 8) + 1).toString()}px`,
+        }}
+        >
+          {
+            rows
+          }
+        </div>
+      </>
+      {/* <Board
+        board={board}
+        posiblePos={posibleMove}
+        gameId={location.state.game_id}
+        token={location.state.token}
+      /> */}
       {/* <Button style={{ marginTop: '3%' }} onClick={async () => addGame()}>Join Game</Button>
       <Button style={{ marginTop: '3%' }} onClick={async () => nexMove()}>next</Button> */}
     </>
