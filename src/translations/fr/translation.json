@@ -1,0 +1,32 @@
+{
+  "fr": {
+    "translation": {
+      "navigation": {
+        "home": "Accueil"
+      },
+      "user": {
+        "logout": "Se déconnecter",
+        "username": "Nom d'utilisateur",
+        "lastName": "Nom de famille",
+        "email": "Email",
+        "password": "Mot de passe",
+        "confirmPassword": "Confirmez votre mot de passe",
+        "login": {
+          "loginFailure": "Infos invalid",
+          "login": "Se connecter"
+        },
+        "register": {
+          "register": "Créer un compte",
+          "usernameRequired": "Vous devez entrer un nom d'utilisateur",
+          "lastNameRequire": "Vous devez entrer un nom de famille",
+          "emailRequired": "Vous devez entrer un email",
+          "emailInvalid": "Cet Email n'est pas un mail valid",
+          "passwordRequired": "Vous devez entrer un mot de pass",
+          "passwordMinLenght": "Votre mot de pass doit faire au moins 6 caractères",
+          "passwordNotMatch": "Les mots de passe ne correspondent pas",
+          "registerButton": "Créer un compte"
+        }
+      }
+    }
+  }
+}

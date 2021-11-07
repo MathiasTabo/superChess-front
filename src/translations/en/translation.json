@@ -1,0 +1,32 @@
+{
+  "en": {
+    "translation": {
+      "navigation": {
+        "home": "Home"
+      },
+      "user": {
+        "logout": "Log Out",
+        "username": "Username",
+        "lastName": "Last Name",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm your Password",
+        "login": {
+          "login": "Login",
+          "loginFailure": "Wrong Credentials"
+        },
+        "register": {
+          "register": "Create your account",
+          "usernameRequired": "Username is required",
+          "lastNameRequire": "Last Name is required",
+          "emailRequired": "Email is required",
+          "emailInvalid": "Email is invalid",
+          "passwordRequired": "Password is required",
+          "passwordMinLenght": "Password must be at least 6 characters",
+          "passwordNotMatch": "Passwords don't match",
+          "registerButton": "Register"
+        }
+      }
+    }
+  }
+}
